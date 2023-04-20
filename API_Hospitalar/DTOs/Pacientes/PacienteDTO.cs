@@ -4,7 +4,6 @@ namespace API_Hospitalar.DTO.Paciente
 {
     public class PacienteDTO
     {
-        public int Identificador { get; set; }
         public string Nome { get; set; }
         public string CPF { get; set; }
         public string Telefone { get; set; }
@@ -13,8 +12,8 @@ namespace API_Hospitalar.DTO.Paciente
         public string Genero { get; set; }
         public string Contato_de_Emergencia { get; set; }
         public string Status_De_Atendimento { get; set; }
-        public string Descricao_alergia { get; set; }
-        public string Descricao_cuidados { get; set; }
+        public string Alergias { get; set; }
+        public string Cuidados_especificos { get; set; }
 
     }
 }

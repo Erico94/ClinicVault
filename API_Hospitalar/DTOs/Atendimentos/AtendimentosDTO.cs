@@ -1,8 +1,7 @@
-﻿namespace API_Hospitalar.DTOs.AtendimentosDTO
+﻿namespace API_Hospitalar.DTOs.Atendimentos
 {
-    public class AtendimentosGetDTO
+    public class AtendimentosDTO
     {
-        public int Id_Atendimento { get; set; } 
         public string Descricao { get; set; }
         public int Identificador_medico { get; set; }
         public int Identificador_paciente { get; set; }

@@ -42,7 +42,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("ALERGIAS");
+                    b.ToTable("ALERGIAS", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Atendimentos", b =>
@@ -74,7 +74,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("ATENDIMENTOS");
+                    b.ToTable("ATENDIMENTOS", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Cuidados", b =>
@@ -98,7 +98,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("CUIDADOS-ESPECIFICOS");
+                    b.ToTable("CUIDADOS-ESPECIFICOS", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.EnfermeiroModel", b =>
@@ -148,7 +148,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ENFERMEIROS");
+                    b.ToTable("ENFERMEIROS", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.MedicoModel", b =>
@@ -211,7 +211,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MEDICOS");
+                    b.ToTable("MEDICOS", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.PacienteModel", b =>
@@ -268,7 +268,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PACIENTES");
+                    b.ToTable("PACIENTES", (string)null);
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Alergias", b =>

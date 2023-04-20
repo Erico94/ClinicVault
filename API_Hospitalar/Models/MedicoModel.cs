@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace API_Hospitalar.Models
 {
     [Table("MEDICOS")]
-    public class MedicoModel:PessoaModel
+    public class MedicoModel:Pessoa
     {
         [Column("INSTITUICAO-FORMACAO"),Required]public string InstituicaoDeFormacao { get; set; }
         [Column("CRM-UF"),Required] public string CRM_UF { get; set; }

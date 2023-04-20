@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 namespace API_Hospitalar.Models
 {
     [Table("PACIENTES")]
-    public class PacienteModel:PessoaModel
+    public class PacienteModel:Pessoa
     {
         [Column("CONTATO-EMERGENCIA"),Required] public string Contato_de_Emergencia { get; set; }
         [Column("CONVENIO")] public string Convenio { get; set; }

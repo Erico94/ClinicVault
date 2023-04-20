@@ -48,7 +48,7 @@ namespace API_Hospitalar.Controllers
         }
 
         [HttpPut("{identificador}")]
-        public ActionResult EditarEnfermeiro([FromRoute] int identificador, [FromBody] EnfermeiroDTO enfermeiroEditado)
+        public ActionResult<EnfermeiroGetDTO> EditarEnfermeiro([FromRoute] int identificador, [FromBody] EnfermeiroPutDTO enfermeiroEditado)
         {
             EnfermeiroModel buscaEnfermeiroPorId = _dbContext.DbEnfermeiros.Where(i => i.Id == identificador).FirstOrDefault();
             if (buscaEnfermeiroPorId == null)
@@ -57,18 +57,17 @@ namespace API_Hospitalar.Controllers
             }
             else
             {
-                string verificacao = _IService.ValidacaoItensObrigatoriosEnfermeiros(enfermeiroEditado);
-                if (verificacao == "faltaDadosObrigatorios")
+                bool verificacao = _IService.ValidacaoEnfermeiroPutDTO(enfermeiroEditado);
+                if (verificacao==false)
                 {
-                    return BadRequest("Impossível editar enfermeiro. Cpf, nome, data de nascimento" +
-                        ", telefone, instituição de formação e cadastro COFEN  são de preenchimento obrigatório, verifique e tente novamente.");
+                    return BadRequest("Impossível editar enfermeiro. Nome, telefone, instituição de formação e cadastro COFEN  são de preenchimento obrigatório," +
+                        " verifique e tente novamente.");
                 }
-                _IService.EnfermeiroDTO_para_EnfermeiroModel ( buscaEnfermeiroPorId, enfermeiroEditado );
+                _IService.EnfermeiroPut_para_Model ( enfermeiroEditado, buscaEnfermeiroPorId);
                 _dbContext.DbEnfermeiros.Attach(buscaEnfermeiroPorId);
                 _dbContext.SaveChanges();
-                enfermeiroEditado.Identificador = buscaEnfermeiroPorId.Id;
-                enfermeiroEditado.Genero = buscaEnfermeiroPorId.Genero;
-                return Ok(enfermeiroEditado);
+                EnfermeiroGetDTO enfermeiroGet = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(buscaEnfermeiroPorId);
+                return Ok(enfermeiroGet);
             }
         }
 

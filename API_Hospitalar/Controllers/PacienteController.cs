@@ -31,7 +31,7 @@ namespace API_Hospitalar.Controllers
         [HttpPost]
         public ActionResult<PacienteGetDTO> CadastrarPaciente([FromBody] PacienteDTO novoPaciente)
         {
-            bool verificacao = _IService.ValidacaoItensObrigatoriosPacientes(novoPaciente);
+            bool verificacao = _IService.PacienteGet_ItensObrigatorios(novoPaciente);
             if (verificacao == false)
             {
                 return BadRequest("Impossível cadastrar paciente. Cpf, nome, data de nascimento" +
@@ -46,7 +46,8 @@ namespace API_Hospitalar.Controllers
                 }
                 else
                 {
-                    PacienteModel pacienteModel = _IService.PacienteDTO_para_Model(novoPaciente);
+                    PacienteModel pacienteModel = new PacienteModel();
+                    _IService.PacienteDTO_para_Model(novoPaciente, pacienteModel);
                     bool validacao = _IService.ValidacaoStatusAtendimento(novoPaciente.Status_De_Atendimento);
                     if (validacao)
                     {
@@ -65,7 +66,6 @@ namespace API_Hospitalar.Controllers
                     _dbContext.DbPacientes.Add(pacienteModel);
                     _dbContext.SaveChanges();
 
-                    //DAQUI EM DIANTE É O RESPONSE
 
                     PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(pacienteModel);
                     return Created(Request.Path, pacienteGetDTO);
@@ -75,34 +75,28 @@ namespace API_Hospitalar.Controllers
         }
 
         [HttpPut("{ídentificador}")]
-        public ActionResult<PacienteDTO> EditarPorId([FromBody] PacienteDTO pacienteEditado, [FromRoute] int ídentificador)
+        public ActionResult<PacienteGetDTO> EditarPorId([FromBody] PacientePutDTO pacienteEditado, [FromRoute] int ídentificador)
         {
             PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == ídentificador).FirstOrDefault();
             if (buscaPaciente != null)
             {
-                bool verificacao = _IService.ValidacaoItensObrigatoriosPacientes(pacienteEditado);
+                bool verificacao = _IService.PacientePut_ItensObrigatorios(pacienteEditado);
                 if (verificacao)
                 {
-                    buscaPaciente.Nome = pacienteEditado.Nome;
-                    buscaPaciente.CPF = pacienteEditado.CPF;
-                    buscaPaciente.Contato_de_Emergencia = pacienteEditado.Contato_de_Emergencia;
-                    buscaPaciente.Convenio = pacienteEditado.Convenio;
-                    buscaPaciente.Genero = pacienteEditado.Genero;
-                    buscaPaciente.Telefone = pacienteEditado.Telefone;
-                    buscaPaciente.Status_De_Atendimento = pacienteEditado.Status_De_Atendimento;
+                    _IService.PacientePut_para_Model(pacienteEditado, buscaPaciente);
                     _dbContext.DbPacientes.Attach(buscaPaciente);
                     _dbContext.SaveChanges();
-                    return Ok();
+                    PacienteGetDTO pacienteGet = _IService.PacienteModel_para_GetDTO(buscaPaciente);
+                    return Ok(pacienteGet);
                 }
                 else
                 {
-                    return BadRequest("Impossível atualizar paciente. Cpf, nome, data de nascimento" +
-                    ", telefone, status de atendimento e contato de emergência são de preenchimento obrigatório, verifique e tente novamente.");
+                    return BadRequest("Impossível atualizar paciente. Nome, telefone e contato de emergência são de preenchimento obrigatório, verifique e tente novamente.");
                 }
             }
             else
             {
-                return NotFound("Não foi possivel localizar este identificador.");
+                return NotFound ("Código identificador não encontrado em nosso sistema.");
             }
 
 
@@ -133,7 +127,7 @@ namespace API_Hospitalar.Controllers
             }
             else
             {
-                return NotFound("Não foi possivel localizar o código identificador em nosso sistema.");
+                return NotFound ("Código identificador não encontrado em nosso sistema.");
             }
         }
 
@@ -186,7 +180,7 @@ namespace API_Hospitalar.Controllers
                 }
                 else
                 {
-                    return NotFound("Identificador não encontrado em nosso sistema.");
+                    return NotFound ("Código identificador não encontrado em nosso sistema.");
                 }
             }
             else
@@ -227,7 +221,7 @@ namespace API_Hospitalar.Controllers
                 }
                 else
                 {
-                    return NotFound("Código identificador não encontrado em nosso sistema.");
+                    return NotFound ("Código identificador não encontrado em nosso sistema.");
                 }
             }
             else

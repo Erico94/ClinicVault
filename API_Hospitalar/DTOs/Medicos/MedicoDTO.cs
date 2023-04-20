@@ -6,7 +6,6 @@ namespace API_Hospitalar.DTOs.Medicos
 {
     public class MedicoDTO
     {
-        public int Identificador { get; set; }
         public string Nome { get; set; }
         public string Genero { get; set; }
         public DateTime Data_de_Nascimento { get; set; }
@@ -16,6 +15,5 @@ namespace API_Hospitalar.DTOs.Medicos
         public string CRM_UF { get; set; }
         public string EspecializacaoClinica { get; set; }
         public bool EstadoNoSistema { get; set; }
-        public int Atendimentos { get; set; }
     }
 }

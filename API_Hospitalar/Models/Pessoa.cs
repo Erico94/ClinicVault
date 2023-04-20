@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API_Hospitalar.Models
 {
     
-    public abstract class PessoaModel
+    public abstract class Pessoa
     {
         [Column("ID"),Key]public int Id { get; set; }
         [Column("NOME"),Required,MaxLength(100)]public string Nome { get; set; }

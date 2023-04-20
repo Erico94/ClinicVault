@@ -57,12 +57,12 @@ namespace API_Hospitalar.Controllers
         }
 
         [HttpPut("{identificador}")]
-        public ActionResult <MedicoGetDTO> EditarMedico ([FromBody] MedicoDTO medicoEditado,[FromRoute] int identificador)
+        public ActionResult <MedicoGetDTO> EditarMedico ([FromBody] MedicoPutDTO medicoEditado,[FromRoute] int identificador)
         {
             MedicoModel buscaMedico = _dbContext.DbMedicos.Where(i => i.Id == identificador).FirstOrDefault();
             if (buscaMedico != null)
             {
-                string validacao = _IService.ValidacaoItensObrigatoriosMedicos(medicoEditado);
+                string validacao = _IService.MedicoPutItensObrigatorios(medicoEditado);
                 if (validacao == "dadosNulos")
                 {
                     return BadRequest("Não foi possível atualizar médico, lembre-se que os seguintes dados são de preenchimento obrigatório: " +
@@ -75,8 +75,7 @@ namespace API_Hospitalar.Controllers
                 }
                 else
                 {
-                    _IService.MedicoDTO_para_Model(medicoEditado, buscaMedico);
-                    buscaMedico = buscaMedico;
+                    _IService.MedicoPutDTO_para_Model(medicoEditado, buscaMedico);
                     _dbContext.DbMedicos.Attach(buscaMedico);
                     _dbContext.SaveChanges();
                     MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(buscaMedico);
