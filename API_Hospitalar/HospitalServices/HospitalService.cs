@@ -220,6 +220,7 @@ namespace API_Hospitalar.HospitalServices
             {
                 medicoModel.EstadoNoSistema = "Inativo";
             }
+
             return (medicoModel);
         }
         public MedicoModel MedicoPutDTO_para_Model(MedicoPutDTO medicoPutDTO, MedicoModel medicoModel)
