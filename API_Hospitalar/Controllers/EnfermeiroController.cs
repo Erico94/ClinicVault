@@ -25,22 +25,14 @@ namespace API_Hospitalar.Controllers
         [HttpPost]
         public ActionResult<EnfermeiroGetDTO> CadastrarEnfermeiro([FromBody] EnfermeiroDTO novoEnfermeiro)
         {
-            string verificacao = _IService.ValidacaoItensObrigatoriosEnfermeiros(novoEnfermeiro);
-            if (verificacao == "faltaDadosObrigatorios")
-            {
-                return BadRequest("Impossível cadastrar enfermeiro. Cpf, nome, data de nascimento" +
-                    ", telefone, instituição de formação e cadastro COFEN  são de preenchimento obrigatório, verifique e tente novamente.");
-            }
-            else if(verificacao == "CpfExistente")
+            var verificaCpf = _dbContext.DbEnfermeiros.Where(i => i.CPF == novoEnfermeiro.CPF).FirstOrDefault();
+            if (verificaCpf != null)
             {
                 return Conflict("CPF ja cadastrado em nosso sistema.");
             }
             EnfermeiroModel enfermeiroModel = new EnfermeiroModel();
             enfermeiroModel = _IService.EnfermeiroDTO_para_EnfermeiroModel( enfermeiroModel, novoEnfermeiro);
-            _dbContext.DbEnfermeiros.Add(enfermeiroModel);
-            _dbContext.SaveChanges();
-
-            //RESPONSE
+            
             EnfermeiroGetDTO enfermeiroGetDTO = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(enfermeiroModel);
             return Created(Request.Path, enfermeiroGetDTO);
             
@@ -57,15 +49,7 @@ namespace API_Hospitalar.Controllers
             }
             else
             {
-                bool verificacao = _IService.ValidacaoEnfermeiroPutDTO(enfermeiroEditado);
-                if (verificacao==false)
-                {
-                    return BadRequest("Impossível editar enfermeiro. Nome, telefone, instituição de formação e cadastro COFEN  são de preenchimento obrigatório," +
-                        " verifique e tente novamente.");
-                }
-                _IService.EnfermeiroPut_para_Model ( enfermeiroEditado, buscaEnfermeiroPorId);
-                _dbContext.DbEnfermeiros.Attach(buscaEnfermeiroPorId);
-                _dbContext.SaveChanges();
+                buscaEnfermeiroPorId =_IService.EnfermeiroPut_para_Model ( enfermeiroEditado, buscaEnfermeiroPorId);
                 EnfermeiroGetDTO enfermeiroGet = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(buscaEnfermeiroPorId);
                 return Ok(enfermeiroGet);
             }

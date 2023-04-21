@@ -31,45 +31,20 @@ namespace API_Hospitalar.Controllers
         [HttpPost]
         public ActionResult<PacienteGetDTO> CadastrarPaciente([FromBody] PacienteDTO novoPaciente)
         {
-            bool verificacao = _IService.PacienteGet_ItensObrigatorios(novoPaciente);
-            if (verificacao == false)
+            var buscaCPF = _dbContext.DbPacientes.Where(paciente => paciente.CPF == novoPaciente.CPF).FirstOrDefault();
+            if (buscaCPF != null)
             {
-                return BadRequest("Impossível cadastrar paciente. Cpf, nome, data de nascimento" +
-                    ", telefone e contato de emergência são de preenchimento obrigatório, verifique e tente novamente.");
+                return Conflict("CPF já cadastrado em nosso sistema. Identificador do paciente com este cpf:" + buscaCPF.Id + ".");
             }
             else
             {
-                var buscaCPF = _dbContext.DbPacientes.Where(paciente => paciente.CPF == novoPaciente.CPF).FirstOrDefault();
-                if (buscaCPF != null)
-                {
-                    return Conflict("CPF já cadastrado em nosso sistema. Código do paciente com este cpf:" + buscaCPF.Id + ".");
-                }
-                else
-                {
-                    PacienteModel pacienteModel = new PacienteModel();
-                    _IService.PacienteDTO_para_Model(novoPaciente, pacienteModel);
-                    bool validacao = _IService.ValidacaoStatusAtendimento(novoPaciente.Status_De_Atendimento);
-                    if (validacao)
-                    {
-                        pacienteModel.Status_De_Atendimento = novoPaciente.Status_De_Atendimento;
-                        if (novoPaciente.Status_De_Atendimento == "ATENDIDO")
-                        {
-                            return BadRequest("Impossível fornecer status de atendimento no ato de cadastro, possibilidades aceitas: NAO_ATENDIDO," +
-                                " AGUARDANDO_ATENDIMENTO ou EM_ATENDIMENTO. Tente novamente.");
-                        }
-                    }
-                    else
-                    {
-                        return BadRequest("ATENÇÃO: apenas os seguintes status são aceitos: ATENDIDO, EM_ATENDIMENTO, NAO_ATENDIDO ou AGUARDANDO_ATENDIMENTO.Verifique e " +
-                            "insira um status de atendimento válido.");
-                    }
-                    _dbContext.DbPacientes.Add(pacienteModel);
-                    _dbContext.SaveChanges();
+                PacienteModel pacienteModel = new PacienteModel();
+                pacienteModel = _IService.PacienteDTO_para_Model(novoPaciente, pacienteModel);
+                    
 
 
-                    PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(pacienteModel);
-                    return Created(Request.Path, pacienteGetDTO);
-                }
+                PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(pacienteModel);
+                return Created(Request.Path, pacienteGetDTO);
             }
 
         }
@@ -80,19 +55,11 @@ namespace API_Hospitalar.Controllers
             PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == ídentificador).FirstOrDefault();
             if (buscaPaciente != null)
             {
-                bool verificacao = _IService.PacientePut_ItensObrigatorios(pacienteEditado);
-                if (verificacao)
-                {
-                    _IService.PacientePut_para_Model(pacienteEditado, buscaPaciente);
-                    _dbContext.DbPacientes.Attach(buscaPaciente);
-                    _dbContext.SaveChanges();
-                    PacienteGetDTO pacienteGet = _IService.PacienteModel_para_GetDTO(buscaPaciente);
-                    return Ok(pacienteGet);
-                }
-                else
-                {
-                    return BadRequest("Impossível atualizar paciente. Nome, telefone e contato de emergência são de preenchimento obrigatório, verifique e tente novamente.");
-                }
+                _IService.PacientePut_para_Model(pacienteEditado, buscaPaciente);
+                _dbContext.DbPacientes.Attach(buscaPaciente);
+                _dbContext.SaveChanges();
+                PacienteGetDTO pacienteGet = _IService.PacienteModel_para_GetDTO(buscaPaciente);
+                return Ok(pacienteGet);
             }
             else
             {
@@ -108,22 +75,14 @@ namespace API_Hospitalar.Controllers
             PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == identificador).FirstOrDefault();
             if (buscaPaciente != null)
             {
-                bool validacaoStatus = _IService.ValidacaoStatusAtendimento(paciente.Status_de_Atendimento);
-                if (validacaoStatus)
+                buscaPaciente.Status_De_Atendimento = paciente.Status_de_Atendimento;
+                if (buscaPaciente.Status_De_Atendimento == "ATENDIDO")
                 {
-                    buscaPaciente.Status_De_Atendimento = paciente.Status_de_Atendimento;
-                    if (buscaPaciente.Status_De_Atendimento == "Atendido" || buscaPaciente.Status_De_Atendimento == "atendido")
-                    {
-                        buscaPaciente.TotalAtendimentos++;
-                    }
-                    _dbContext.DbPacientes.Attach(buscaPaciente);
-                    _dbContext.SaveChanges();
-                    return Ok(buscaPaciente);
+                    buscaPaciente.TotalAtendimentos++;
                 }
-                else
-                {
-                    return BadRequest("Não foi possível alterar status. Deve-se inserir um dos seguintes status de atendimento: ATENDIDO, NAO_ATENDIDO, EM_ATENDIMENTO ou AGUARDANDO_ATENDIMENTO.");
-                }
+                _dbContext.DbPacientes.Attach(buscaPaciente);
+                _dbContext.SaveChanges();
+                return Ok(buscaPaciente);
             }
             else
             {
@@ -136,24 +95,16 @@ namespace API_Hospitalar.Controllers
         {
             if (status != null)
             {
-                bool validacao = _IService.ValidacaoStatusAtendimento(status);
-                if (validacao == true)
+                List<PacienteGetDTO> listaPacientes = new List<PacienteGetDTO>();
+                foreach (var paciente in _dbContext.DbPacientes)
                 {
-                    List<PacienteGetDTO> listaPacientes = new List<PacienteGetDTO>();
-                    foreach (var paciente in _dbContext.DbPacientes)
+                    if (paciente.Status_De_Atendimento == status)
                     {
-                        if (paciente.Status_De_Atendimento == status)
-                        {
-                            PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(paciente);
-                            listaPacientes.Add(pacienteGetDTO);
-                        }
+                        PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(paciente);
+                        listaPacientes.Add(pacienteGetDTO);
                     }
-                    return Ok(listaPacientes);
                 }
-                else
-                {
-                    return NotFound("ATENÇÃO: apenas os seguintes status são aceitos: ATENDIDO, EM_ATENDIMENTO, NAO_ATENDIDO ou AGUARDANDO_ATENDIMENTO. Verifique e insira um status de atendimento válido.");
-                }
+                return Ok(listaPacientes);
             }
             else
             {
@@ -192,7 +143,7 @@ namespace API_Hospitalar.Controllers
         [HttpDelete("{identificador}")]
         public ActionResult DeletarPorId([FromRoute] int identificador)
         {
-            if (identificador != null)
+            if (identificador != 0)
             {
                 PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == identificador).FirstOrDefault();
                 if (buscaPaciente != null)
@@ -201,20 +152,24 @@ namespace API_Hospitalar.Controllers
                     if (buscaAlergia != null)
                     {
                         _dbContext.DbAlergias.Remove(buscaAlergia);
+                        _dbContext.SaveChanges();
                     }
                     
                     Cuidados buscaCuidado = _dbContext.DbCuidados.Where(i => i.PacienteID == buscaPaciente.Id).FirstOrDefault();
                     if (buscaCuidado != null)
                     {
                         _dbContext.DbCuidados.Remove(buscaCuidado);
-                    }
-                    
-                    Atendimentos buscaAtendimentos = _dbContext.DbAtendimentos.Where(i => i.PacienteID == buscaPaciente.Id).FirstOrDefault();
-                    if (buscaAtendimentos != null)
-                    {
-                        _dbContext.DbAtendimentos.Remove(buscaAtendimentos);
+                        _dbContext.SaveChanges();
                     }
 
+                    foreach (var atendimento in _dbContext.DbAtendimentos)
+                    {
+                        if (atendimento.PacienteID == buscaPaciente.Id)
+                        {
+                            _dbContext.DbAtendimentos.Remove(atendimento);
+                            _dbContext.SaveChanges();
+                        }
+                    }
                     _dbContext.DbPacientes.Remove(buscaPaciente);
                     _dbContext.SaveChanges();
                     return NoContent();
@@ -226,7 +181,7 @@ namespace API_Hospitalar.Controllers
             }
             else
             {
-                return BadRequest("Insira um código identificador.");
+                return BadRequest("Insira um código identificador diferente de zero.");
             }
 
         }

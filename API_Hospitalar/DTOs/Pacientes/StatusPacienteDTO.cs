@@ -1,7 +1,9 @@
-﻿namespace API_Hospitalar.DTOs.Pacientes
+﻿using static API_Hospitalar.CustomValidation;
+
+namespace API_Hospitalar.DTOs.Pacientes
 {
     public class StatusPacienteDTO
     {
-        public string Status_de_Atendimento { get; set; }
+        [NotNull] public string Status_de_Atendimento { get; set; }
     }
 }

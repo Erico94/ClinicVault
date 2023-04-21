@@ -26,19 +26,8 @@ namespace API_Hospitalar.Controllers
         [HttpPost]
         public ActionResult<MedicoGetDTO> CadastroDeMedico ([FromBody] MedicoDTO medicoDTO)
         {
-            string validacao = _IService.ValidacaoItensObrigatoriosMedicos(medicoDTO);
-            if (validacao == "dadosNulos") 
-            {
-                return BadRequest("Não foi possível cadastrar médico, lembre-se que os seguintes dados são de preenchimento obrigatório: " +
-                    "nome, cpf, data de nascimento, telefone, instituto de formação, CRM e especialização clínica, verifique os dados e tente novamente.");
-            }else if(validacao == "problemaEspecializacao")
-            {
-                return BadRequest("Não foi possivel cadastrar médico, verifique o item especialização clínica inserida. Valores aceitos: Clinico Geral, Anestesista, " +
-                    "Dermatologia, Ginecologia, Neurologia, Pediatria, Psiquiatria ou Ortopedia.");
-            }
-            else
-            {
-                if(validacao == "CpfExistente")
+            var verificaCpf = _dbContext.DbMedicos.Where(i => i.CPF == medicoDTO.CPF).FirstOrDefault();
+                if(verificaCpf != null)
                 {
                     return Conflict("Este CPF ja consta em nosso sistema.");
                 }
@@ -46,13 +35,10 @@ namespace API_Hospitalar.Controllers
                 {
                     MedicoModel medicoModel = new MedicoModel();
                     _IService.MedicoDTO_para_Model(medicoDTO, medicoModel);
-                    _dbContext.DbMedicos.Add(medicoModel);
-                    _dbContext.SaveChanges();
                     MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(medicoModel);
                         
                     return Created(Request.Path, medicoGetDTO);
                 }
-            }
             
         }
 
@@ -62,25 +48,9 @@ namespace API_Hospitalar.Controllers
             MedicoModel buscaMedico = _dbContext.DbMedicos.Where(i => i.Id == identificador).FirstOrDefault();
             if (buscaMedico != null)
             {
-                string validacao = _IService.MedicoPutItensObrigatorios(medicoEditado);
-                if (validacao == "dadosNulos")
-                {
-                    return BadRequest("Não foi possível atualizar médico, lembre-se que os seguintes dados são de preenchimento obrigatório: " +
-                        "nome, cpf, data de nascimento, telefone, instituto de formação, CRM e especialização clínica, verifique os dados e tente novamente.");
-                }
-                else if (validacao == "problemaEspecializacao")
-                {
-                    return BadRequest("Não foi possivel atualizar médico, verifique o item especialização clínica inserida. Valores aceitos: Clinico Geral, Anestesista, " +
-                        "Dermatologia, Ginecologia, Neurologia, Pediatria, Psiquiatria ou Ortopedia.");
-                }
-                else
-                {
-                    _IService.MedicoPutDTO_para_Model(medicoEditado, buscaMedico);
-                    _dbContext.DbMedicos.Attach(buscaMedico);
-                    _dbContext.SaveChanges();
-                    MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(buscaMedico);
-                    return Ok (medicoGetDTO);
-                }
+                buscaMedico = _IService.MedicoPutDTO_para_Model(medicoEditado, buscaMedico);
+                MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(buscaMedico);
+                return Ok (medicoGetDTO);
             }
             else
             {
@@ -98,13 +68,9 @@ namespace API_Hospitalar.Controllers
                 {
                     buscaMedico.EstadoNoSistema = "Ativo";
                 }
-                else if(medicoEditado.Estado_No_Sistema == false)
-                {
-                    buscaMedico.EstadoNoSistema = "Inativo";
-                }
                 else
                 {
-                    return BadRequest("Não foi possivel alterar o estado do médicoem nosso sistema, insira TRUE para Ativo, e FALSE caso esteja Inativo.");
+                    buscaMedico.EstadoNoSistema = "Inativo";
                 }
                 _dbContext.DbMedicos.Attach(buscaMedico);
                 _dbContext.SaveChanges();
@@ -193,6 +159,14 @@ namespace API_Hospitalar.Controllers
                 MedicoModel medicoModel = _dbContext.DbMedicos.Where(i => i.Id == identificador).FirstOrDefault();
                 if (medicoModel != null)
                 {
+                    foreach (var atendimento in _dbContext.DbAtendimentos)
+                    {
+                        if (atendimento.MedicoId == medicoModel.Id)
+                        {
+                            _dbContext.DbAtendimentos.Remove(atendimento);
+                            _dbContext.SaveChanges();
+                        }
+                    }
                     _dbContext.DbMedicos.Remove(medicoModel);
                     _dbContext.SaveChanges();
                     return NoContent();

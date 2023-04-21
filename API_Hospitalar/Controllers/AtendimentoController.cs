@@ -1,10 +1,11 @@
-﻿using API_Hospitalar.DTOs.Atendimentos;
-using API_Hospitalar.DTOs.AtendimentosDTO;
+﻿using API_Hospitalar.DTOs.AtendimentosDTO;
 using API_Hospitalar.HospitalContextDb;
 using API_Hospitalar.IHospital;
 using API_Hospitalar.Models;
 using Microsoft.AspNetCore.Mvc;
-
+using System.Reflection;
+using API_Hospitalar.DTOs.Pacientes;
+using API_Hospitalar.DTOs.Medicos;
 
 namespace API_Hospitalar.Controllers
 {
@@ -22,40 +23,159 @@ namespace API_Hospitalar.Controllers
         }
 
 
-//continua daqui
+        //continua daqui
         [HttpPost]
         public ActionResult<AtendimentosGetDTO> InserirAtendimeto([FromBody] AtendimentosDTO atendimentosDTO)
         {
-            string validacao =_IService.AtendimentoItensObrigatorios(atendimentosDTO);
-            if (validacao == "faltamInformacoes")
+            PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == atendimentosDTO.Identificador_paciente).FirstOrDefault();
+            if (buscaPaciente != null)
             {
-                return BadRequest("Atendimento não registrado. Todos os itens são de preenchimento obrigatório, identificador_médico e " +
-                    "identificador_paciente devem ser diferentaes de zero. ");
-            }
-            else
-            {
-                PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == atendimentosDTO.Identificador_paciente).FirstOrDefault();
-                if (buscaPaciente != null)
+                MedicoModel buscaMedico = _dbContext.DbMedicos.Where(i => i.Id == atendimentosDTO.Identificador_medico).FirstOrDefault();
+                if (buscaMedico != null)
                 {
-                    MedicoModel buscaMedico = _dbContext.DbMedicos.Where(i => i.Id == atendimentosDTO.Identificador_medico).FirstOrDefault();
-                    if (buscaMedico != null)
+                    Atendimentos atendimento = new Atendimentos()
                     {
-                        Atendimentos atendimento = new Atendimentos()
-                        {
-                            Descricao = atendimentosDTO.Descricao,
-                            MedicoId = atendimentosDTO.Identificador_medico,
-                            PacienteID = atendimentosDTO.Identificador_paciente
-                        };
-                        _dbContext.DbAtendimentos.Add(atendimento);
-                        _dbContext.SaveChanges();
-                    }
+                        Descricao = atendimentosDTO.Descricao,
+                        MedicoId = atendimentosDTO.Identificador_medico,
+                        PacienteID = atendimentosDTO.Identificador_paciente
+                    };
+                    _dbContext.DbAtendimentos.Add(atendimento);
+                    _dbContext.SaveChanges();
+                    AtendimentosGetDTO getDTO = new AtendimentosGetDTO()
+                    {
+                        Id_Atendimento = atendimento.Id_Atendimento,
+                        Descricao = atendimento.Descricao,
+                        Identificador_medico = atendimento.MedicoId,
+                        Identificador_paciente = atendimento.PacienteID
+                    };
+                    getDTO.Paciente = new PacienteSimplesGetDTO()
+                    {
+                        Identificador = buscaPaciente.Id,
+                        Nome = buscaPaciente.Nome,
+                        Convenio = buscaPaciente.Convenio
+                    };
+                    getDTO.Medico = new MedicoSimplesGetDTO()
+                    {
+                        Identificador = buscaMedico.Id,
+                        Nome = buscaMedico.Nome,
+                        CRM_UF = buscaMedico.CRM_UF,
+                        EspecializacaoClinica = buscaMedico.EspecializacaoClinica
+                    };
+                    buscaPaciente.TotalAtendimentos++;
+                    buscaMedico.TotalAtendimentos++;
+                    buscaPaciente.Status_De_Atendimento = "ATENDIDO";
+                    return Created(Request.Path,getDTO);
                 }
                 else
                 {
-                    return NotFound("Identificador de paciente não encontrado.");
+                    return NotFound("Identificador de médico não encontrado.");
                 }
             }
-            return Ok();
+            else
+            {
+                return NotFound("Identificador de paciente não encontrado.");
+            }
         }
+
+        [HttpGet]
+        public ActionResult<List<AtendimentosGetDTO>> ObterTodos()
+        {
+            List<AtendimentosGetDTO> listaAtendimentos = new List<AtendimentosGetDTO>();
+            foreach (var atendimento in _dbContext.DbAtendimentos)
+            {
+                AtendimentosGetDTO atendimentoGet = new AtendimentosGetDTO()
+                {
+                    Id_Atendimento = atendimento.Id_Atendimento,
+                    Descricao = atendimento.Descricao,
+                    Identificador_paciente = atendimento.PacienteID,
+                    Identificador_medico = atendimento.MedicoId
+                };
+                listaAtendimentos.Add(atendimentoGet);
+            }
+            return Ok(listaAtendimentos);
+        }
+
+        [HttpGet("{identificador}")]
+        public ActionResult<AtendimentosGetDTO> ObterPorId([FromRoute] int identificador)
+        {
+            if (identificador != 0)
+            {
+                Atendimentos atendimento = _dbContext.DbAtendimentos.Where(i => i.Id_Atendimento == identificador).FirstOrDefault();
+                if (atendimento != null)
+                {
+                    AtendimentosGetDTO atendimentosGet = new AtendimentosGetDTO()
+                    {
+                        Id_Atendimento = atendimento.Id_Atendimento,
+                        Descricao = atendimento.Descricao,
+                        Identificador_medico = atendimento.MedicoId,
+                        Identificador_paciente = atendimento.PacienteID
+                    };
+                    return Ok(atendimentosGet);
+                }
+                else
+                {
+                    return NotFound("Identificadornão encontrado.");
+                }
+            }
+            else
+            {
+                return BadRequest("Identificador deve ser diferente de zero.");
+            }
+        }
+
+        [HttpPut("{identificador}")]
+        public ActionResult <AtendimentosGetDTO> EditarAtendimento([FromRoute]int identificador, [FromBody] AtendimentoPutDTO atendimentoEditado)
+        {
+            if(atendimentoEditado !=null || identificador != 0)
+            {
+                Atendimentos atendimento = _dbContext.DbAtendimentos.Where(i => i.Id_Atendimento == identificador).FirstOrDefault();
+                if(atendimento != null)
+                {
+                    atendimento.Descricao = atendimentoEditado.Descricao;
+                    _dbContext.DbAtendimentos.Attach(atendimento);
+                    _dbContext.SaveChanges();
+                    AtendimentosGetDTO getDTO = new AtendimentosGetDTO()
+                    {
+                        Id_Atendimento = atendimento.Id_Atendimento,
+                        Descricao = atendimento.Descricao,
+                        Identificador_medico = atendimento.MedicoId,
+                        Identificador_paciente = atendimento.PacienteID
+                    };
+                    return Ok(getDTO);
+                }
+                else
+                {
+                    return NotFound("Identificador não encontrado.");
+                }
+            }
+            else
+            {
+                return BadRequest("Descrição de atendimento deve ser preenchido, e Identificador dierente de zero.");
+            }
+        }
+
+        [HttpDelete("{identificador}")]
+        public ActionResult DeletarAtendimento([FromRoute] int identificador)
+        {
+            if (identificador != 0)
+            {
+                Atendimentos atendimento = _dbContext.DbAtendimentos.Where(i => i.Id_Atendimento == identificador).FirstOrDefault();
+                if (atendimento != null)
+                {
+                    _dbContext.DbAtendimentos.Remove(atendimento);
+                    _dbContext.SaveChanges();
+                    return Ok();
+                }
+                else
+                {
+                    return NotFound("Identificador não encontrado.");
+                }
+            }
+            else
+            {
+                return BadRequest("Insira um identificador dieferente de zero.");
+            }
+        }
+
     }
 }

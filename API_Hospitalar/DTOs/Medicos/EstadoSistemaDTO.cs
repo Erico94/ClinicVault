@@ -1,7 +1,9 @@
-﻿namespace API_Hospitalar.DTOs.Medicos
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace API_Hospitalar.DTOs.Medicos
 {
     public class EstadoSistemaDTO
     {
-        public bool Estado_No_Sistema { get; set; }
+        [NotNull]public bool Estado_No_Sistema { get; set; }
     }
 }

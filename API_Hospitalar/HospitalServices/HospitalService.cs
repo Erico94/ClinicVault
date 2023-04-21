@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using API_Hospitalar.HospitalContextDb;
 using API_Hospitalar.DTOs.Pacientes;
 using Microsoft.AspNetCore.Http.HttpResults;
-using API_Hospitalar.DTOs.Atendimentos;
 
 namespace API_Hospitalar.HospitalServices
 {
@@ -127,10 +126,12 @@ namespace API_Hospitalar.HospitalServices
                 _dbContext.SaveChanges();
             }
 
-            if (pacienteModel.Status_De_Atendimento == "Atendido")
+            if (pacienteModel.Status_De_Atendimento == "ATENDIDO")
             {
                 pacienteModel.TotalAtendimentos++;
             }
+            _dbContext.DbPacientes.Add(pacienteModel);
+            _dbContext.SaveChanges();
             return (pacienteModel);
         }
         public PacienteModel PacientePut_para_Model(PacientePutDTO pacienteEditado, PacienteModel pacienteModel)
@@ -150,38 +151,6 @@ namespace API_Hospitalar.HospitalServices
             }
             return pacienteModel;
         }
-        public bool PacienteGet_ItensObrigatorios(PacienteDTO paciente)
-        {
-            if (paciente.Nome == null || paciente.Nome == "string" || paciente.Contato_de_Emergencia == null || paciente.Contato_de_Emergencia == "string"
-                || paciente.Telefone == null || paciente.Telefone == "string")
-            {
-                return false;
-            }
-            else
-            {
-                bool statusAtendimento = ValidacaoStatusAtendimento(paciente.Status_De_Atendimento);
-                if (statusAtendimento)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        public bool PacientePut_ItensObrigatorios(PacientePutDTO paciente)
-        {
-            if (paciente.Nome == null || paciente.Nome == "string" || paciente.Contato_de_Emergencia == null || paciente.Contato_de_Emergencia == "string"
-                || paciente.Telefone == null || paciente.Telefone == "string")
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
 
 
         public MedicoGetDTO MedicoModel_para_GetDTO(MedicoModel medicoModel)
@@ -200,6 +169,21 @@ namespace API_Hospitalar.HospitalServices
                 EstadoNoSistema = medicoModel.EstadoNoSistema,
                 Atendimentos = medicoModel.TotalAtendimentos,
             };
+            medicoGet.Lista_de_Atendimentos = new List<AtendimentosGetDTO>();
+            foreach (var atendimento in _dbContext.DbAtendimentos)
+            {
+                if (atendimento.MedicoId == medicoGet.Identificador)
+                {
+                    AtendimentosGetDTO atendimentoDTO = new AtendimentosGetDTO()
+                    {
+                        Id_Atendimento = atendimento.Id_Atendimento,
+                        Descricao = atendimento.Descricao,
+                        Identificador_medico = atendimento.MedicoId,
+                        Identificador_paciente = atendimento.PacienteID
+                    };
+                    medicoGet.Lista_de_Atendimentos.Add(atendimentoDTO);
+                }
+            }
             return medicoGet;
         }
         public MedicoModel MedicoDTO_para_Model(MedicoDTO medicoDTO, MedicoModel medicoModel)
@@ -220,7 +204,8 @@ namespace API_Hospitalar.HospitalServices
             {
                 medicoModel.EstadoNoSistema = "Inativo";
             }
-
+            _dbContext.DbMedicos.Add(medicoModel);
+            _dbContext.SaveChanges();
             return (medicoModel);
         }
         public MedicoModel MedicoPutDTO_para_Model(MedicoPutDTO medicoPutDTO, MedicoModel medicoModel)
@@ -231,91 +216,9 @@ namespace API_Hospitalar.HospitalServices
             medicoModel.CRM_UF = medicoPutDTO.CRM_UF;
             medicoModel.EspecializacaoClinica = medicoPutDTO.EspecializacaoClinica;
             medicoModel.Genero = Genero(medicoPutDTO.Genero);
+            _dbContext.DbMedicos.Attach(medicoModel);
+            _dbContext.SaveChanges();
             return (medicoModel);
-        }
-        public string ValidacaoItensObrigatoriosMedicos(MedicoDTO novoMedico)
-        {
-            string validacao;
-            if (novoMedico.Nome == null || novoMedico.Nome == "string" || novoMedico.CPF == null || novoMedico.CPF == "string"
-                || novoMedico.Data_de_Nascimento == null || novoMedico.CRM_UF == null || novoMedico.CRM_UF == "string"
-                || novoMedico.Telefone == null || novoMedico.Telefone == "string" || novoMedico.InstituicaoDeFormacao == null
-                || novoMedico.InstituicaoDeFormacao == "string")
-            {
-                validacao = "dadosNulos";
-                return validacao;
-            }
-            else
-            {
-                if (novoMedico.EspecializacaoClinica == "Clínico Geral" || novoMedico.EspecializacaoClinica == "Clinico Geral" ||
-                   novoMedico.EspecializacaoClinica == "Anestesista" || novoMedico.EspecializacaoClinica == "Dermatologia" ||
-                   novoMedico.EspecializacaoClinica == "Ginecologia" || novoMedico.EspecializacaoClinica == "Neurologia" ||
-                   novoMedico.EspecializacaoClinica == "Pediatria" || novoMedico.EspecializacaoClinica == "Psiquiatria" ||
-                   novoMedico.EspecializacaoClinica == "Ortopedia")
-                {
-                    bool verificaCPF = BuscaCPF(novoMedico.CPF);
-                    if (verificaCPF != true)
-                    {
-                        validacao = "CpfExistente";
-                        return (validacao);
-                    }
-                    else
-                    {
-                        validacao = "ok";
-                        return validacao;
-                    }
-
-                }
-                else
-                {
-                    validacao = "problemaEspecializacao";
-                    return validacao;
-                }
-            }
-        }
-        public string MedicoPutItensObrigatorios(MedicoPutDTO medicoEditado)
-        {
-            string validacao;
-            if (medicoEditado.Nome == null || medicoEditado.Nome == "string" || medicoEditado.CRM_UF == null || medicoEditado.CRM_UF == "string"
-                || medicoEditado.Telefone == null || medicoEditado.Telefone == "string" || medicoEditado.InstituicaoDeFormacao == null
-                || medicoEditado.InstituicaoDeFormacao == "string")
-            {
-                validacao = "dadosNulos";
-                return validacao;
-            }
-            else
-            {
-                if (medicoEditado.EspecializacaoClinica == "Clínico Geral" || medicoEditado.EspecializacaoClinica == "Clinico Geral" ||
-                   medicoEditado.EspecializacaoClinica == "Anestesista" || medicoEditado.EspecializacaoClinica == "Dermatologia" ||
-                   medicoEditado.EspecializacaoClinica == "Ginecologia" || medicoEditado.EspecializacaoClinica == "Neurologia" ||
-                   medicoEditado.EspecializacaoClinica == "Pediatria" || medicoEditado.EspecializacaoClinica == "Psiquiatria" ||
-                   medicoEditado.EspecializacaoClinica == "Ortopedia")
-                {
-                    validacao = "ok";
-                    return validacao;
-
-                }
-                else
-                {
-                    validacao = "problemaEspecializacao";
-                    return validacao;
-                }
-            }
-        }
-
-
-        public string AtendimentoItensObrigatorios (AtendimentosDTO atendimento)
-        {
-            string resultado;
-            if (atendimento.Descricao == null || atendimento.Descricao == "string" || atendimento.Identificador_medico == 0 || atendimento.Identificador_paciente == 0)
-            {
-                resultado = "faltamInformacoes";
-                return resultado;
-            }
-            else
-            {
-                resultado = "ok";
-                return resultado;
-            }
         }
 
 
@@ -328,6 +231,8 @@ namespace API_Hospitalar.HospitalServices
             enfermeiroModel.CadastroCOFEN_UF = enfermeiroDTO.CadastroCOFEN_UF;
             enfermeiroModel.InstituicaoDeFormacao = enfermeiroDTO.InstituicaoDeFormacao;
             enfermeiroModel.Genero = Genero(enfermeiroDTO.Genero);
+            _dbContext.DbEnfermeiros.Add(enfermeiroModel);
+            _dbContext.SaveChanges();
             return enfermeiroModel;
         }
         public EnfermeiroModel EnfermeiroPut_para_Model (EnfermeiroPutDTO enfermeiroEditado, EnfermeiroModel enfermeiroModel)
@@ -337,6 +242,8 @@ namespace API_Hospitalar.HospitalServices
             enfermeiroModel.CadastroCOFEN_UF = enfermeiroEditado.CadastroCOFEN_UF;
             enfermeiroModel.InstituicaoDeFormacao = enfermeiroEditado.InstituicaoDeFormacao;
             enfermeiroModel.Genero = Genero(enfermeiroEditado.Genero);
+            _dbContext.DbEnfermeiros.Attach(enfermeiroModel);
+            _dbContext.SaveChanges();
             return enfermeiroModel;
         }
         public EnfermeiroGetDTO EnfermeiroModel_para_EnfermeiroGetDTO (EnfermeiroModel enfermeiroModel)
@@ -354,57 +261,7 @@ namespace API_Hospitalar.HospitalServices
             };
             return enfermeiroGetDTO;
         }
-        public string ValidacaoItensObrigatoriosEnfermeiros(EnfermeiroDTO novoEnfermeiro)
-        {
-            string resultado;
-
-            if (novoEnfermeiro.Nome == null || novoEnfermeiro.Nome == "string" || novoEnfermeiro.CPF == null || novoEnfermeiro.CPF == "string"
-                || novoEnfermeiro.Data_de_Nascimento == null || novoEnfermeiro.CadastroCOFEN_UF == null || novoEnfermeiro.CadastroCOFEN_UF == "string"
-                || novoEnfermeiro.Telefone == null || novoEnfermeiro.Telefone == "string" || novoEnfermeiro.InstituicaoDeFormacao == null
-                || novoEnfermeiro.InstituicaoDeFormacao == "string")
-            {
-                resultado = "faltaDadosObrigatorios";
-                return resultado;
-            }
-            else
-            {
-                bool verificaCPF = BuscaCPF(novoEnfermeiro.CPF);
-                if (verificaCPF)
-                {
-                    resultado = "CpfExistente";
-                    return resultado;
-                }
-                resultado = "Ok";
-                return resultado; ;
-            }
-        }
-        public bool ValidacaoEnfermeiroPutDTO(EnfermeiroPutDTO enfermeiro)
-        {
-            if (enfermeiro.Nome == null || enfermeiro.Nome == "string" || enfermeiro.CadastroCOFEN_UF == null || enfermeiro.CadastroCOFEN_UF == "string"
-                || enfermeiro.Telefone == null || enfermeiro.Telefone == "string" || enfermeiro.InstituicaoDeFormacao == null
-                || enfermeiro.InstituicaoDeFormacao == "string")
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-
-        public bool ValidacaoStatusAtendimento(string status)
-        {
-            List<string> possibilidades = new List<string>() {"AGUARDANDO_ATENDIMENTO", "ATENDIDO", "NAO_ATENDIDO", "EM_ATENDIMENTO"};
-            foreach(var item in possibilidades)
-            {
-                if(item == status)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
+        
         private string Genero (string genero)
         {
             List<string> valores = new List<string>() { "Masculino", "Feminino", "masculino", "feminino", "M", "m", "F", "f", "Outro", "outro",
@@ -419,34 +276,6 @@ namespace API_Hospitalar.HospitalServices
             genero = "Não informado";
             return genero;
         }
-        private bool BuscaCPF (string cpf)
-        {
-            
-            PacienteModel buscacpfPaciente = _dbContext.DbPacientes.Where(i => i.CPF == cpf).FirstOrDefault();
-            if (buscacpfPaciente == null)
-            {
-                MedicoModel buscacpfMedico = _dbContext.DbMedicos.Where(i => i.CPF == cpf).FirstOrDefault();
-                if (buscacpfMedico == null)
-                {
-                    EnfermeiroModel buscacpfEnfermeiro = _dbContext.DbEnfermeiros.Where(i => i.CPF == cpf).FirstOrDefault();
-                    if (buscacpfEnfermeiro == null)
-                    {
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return true;
-            }
-        }
+
     }
 }

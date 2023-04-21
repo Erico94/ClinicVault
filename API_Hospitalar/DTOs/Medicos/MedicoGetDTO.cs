@@ -1,4 +1,7 @@
-﻿namespace API_Hospitalar.DTOs.Medicos
+﻿using API_Hospitalar.DTOs.AtendimentosDTO;
+using API_Hospitalar.Models;
+
+namespace API_Hospitalar.DTOs.Medicos
 {
     public class MedicoGetDTO
     {
@@ -13,5 +16,6 @@
         public string EspecializacaoClinica { get; set; }
         public string EstadoNoSistema { get; set; }
         public int Atendimentos { get; set; }
+        public List<AtendimentosGetDTO> Lista_de_Atendimentos { get; set; }
     }
 }

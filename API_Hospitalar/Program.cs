@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
-var connectionString= "Server=DESKTOP-BG5E4QK\\SQLEXPRESS;Database=HOSPITAL;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
+var connectionString= "Server=DESKTOP-BG5E4QK\\SQLEXPRESS;Database=LabMedicineBd;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true";
 builder.Services.AddDbContext<HospitalContext>(o=>o.UseSqlServer(connectionString));
 var app = builder.Build();
 

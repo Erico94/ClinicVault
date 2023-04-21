@@ -42,7 +42,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("ALERGIAS", (string)null);
+                    b.ToTable("ALERGIAS");
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Atendimentos", b =>
@@ -74,7 +74,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("ATENDIMENTOS", (string)null);
+                    b.ToTable("ATENDIMENTOS");
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Cuidados", b =>
@@ -98,7 +98,7 @@ namespace API_Hospitalar.Migrations
 
                     b.HasIndex("PacienteID");
 
-                    b.ToTable("CUIDADOS-ESPECIFICOS", (string)null);
+                    b.ToTable("CUIDADOS-ESPECIFICOS");
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.EnfermeiroModel", b =>
@@ -148,7 +148,31 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ENFERMEIROS", (string)null);
+                    b.ToTable("ENFERMEIROS");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CPF = "65433256985",
+                            CadastroCOFEN_UF = "065423/PR",
+                            Data_de_Nascimento = "03/dez/1999",
+                            Genero = "F",
+                            InstituicaoDeFormacao = "UFPR",
+                            Nome = "Janaína Pascoal",
+                            Telefone = "4599778635"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CPF = "06458799652",
+                            CadastroCOFEN_UF = "005423/PR",
+                            Data_de_Nascimento = "03/fev/2003",
+                            Genero = "F",
+                            InstituicaoDeFormacao = "UFPR",
+                            Nome = "Zuleide Silva",
+                            Telefone = "45998784896"
+                        });
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.MedicoModel", b =>
@@ -211,7 +235,37 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("MEDICOS", (string)null);
+                    b.ToTable("MEDICOS");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CPF = "32546879526",
+                            CRM_UF = "032654/PR",
+                            Data_de_Nascimento = "23/jan/1990",
+                            EspecializacaoClinica = "CLINICO_GERAL",
+                            EstadoNoSistema = "true",
+                            Genero = "F",
+                            InstituicaoDeFormacao = "UFPR",
+                            Nome = "Amanda Ciqueira Gomés",
+                            Telefone = "45998165487",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CPF = "03265146588",
+                            CRM_UF = "017654/PR",
+                            Data_de_Nascimento = "03/dez/1995",
+                            EspecializacaoClinica = "CLINICO_GERAL",
+                            EstadoNoSistema = "true",
+                            Genero = "M",
+                            InstituicaoDeFormacao = "UFPR",
+                            Nome = "Aldair Plínio Mossolin",
+                            Telefone = "45998781256",
+                            TotalAtendimentos = 0
+                        });
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.PacienteModel", b =>
@@ -268,7 +322,139 @@ namespace API_Hospitalar.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PACIENTES", (string)null);
+                    b.ToTable("PACIENTES");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CPF = "32451118946",
+                            Contato_de_Emergencia = "45998487596",
+                            Convenio = "Amil",
+                            Data_de_Nascimento = "09/mar/1999",
+                            Genero = "M",
+                            Nome = "José Alves Siqueira",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "4532659874",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CPF = "33889369944",
+                            Contato_de_Emergencia = "45998741523",
+                            Convenio = "Unimed",
+                            Data_de_Nascimento = "09/abr/1987",
+                            Genero = "M",
+                            Nome = "Adair José",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45998742103",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CPF = "82052437940",
+                            Contato_de_Emergencia = "45987452163",
+                            Convenio = "HB Saude",
+                            Data_de_Nascimento = "19/dez/1991",
+                            Genero = "M",
+                            Nome = "Marcos Anderman",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "4532569874",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CPF = "03254879685",
+                            Contato_de_Emergencia = "4532365874",
+                            Convenio = "Medi Saude",
+                            Data_de_Nascimento = "01/jan/1979",
+                            Genero = "F",
+                            Nome = "Maria de Fatima",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45988771365",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CPF = "03256874987",
+                            Contato_de_Emergencia = "45998658742",
+                            Convenio = "Ameplan",
+                            Data_de_Nascimento = "28/jul/1978",
+                            Genero = "M",
+                            Nome = "José Aldo",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45998715236",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CPF = "06548756982",
+                            Contato_de_Emergencia = "4536230198",
+                            Convenio = "Promed",
+                            Data_de_Nascimento = "15/nov/1996",
+                            Genero = "F",
+                            Nome = "Ana Paula Stritzsch",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "4532263584",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CPF = "03215236685",
+                            Contato_de_Emergencia = "45998487596",
+                            Convenio = "Promed",
+                            Data_de_Nascimento = "01/mar/1965",
+                            Genero = "F",
+                            Nome = "Fátima Andrade Silva",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45998748579",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CPF = "09658748695",
+                            Contato_de_Emergencia = "45998547821",
+                            Convenio = "Premium Saude",
+                            Data_de_Nascimento = "09/abr/1972",
+                            Genero = "M",
+                            Nome = "Mário Silva",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45998546325",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CPF = "03265878965",
+                            Contato_de_Emergencia = "45996365247",
+                            Convenio = "Amil",
+                            Data_de_Nascimento = "28/mar/1996",
+                            Genero = "M",
+                            Nome = "André Heimn",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "45996854702",
+                            TotalAtendimentos = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CPF = "06325418759",
+                            Contato_de_Emergencia = "45998487596",
+                            Convenio = "Samaritano",
+                            Data_de_Nascimento = "19/abr/2005",
+                            Genero = "F",
+                            Nome = "Priscila Boliviar Cácer",
+                            Status_De_Atendimento = "NAO_ATENDIDO",
+                            Telefone = "4532659874",
+                            TotalAtendimentos = 0
+                        });
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Alergias", b =>
