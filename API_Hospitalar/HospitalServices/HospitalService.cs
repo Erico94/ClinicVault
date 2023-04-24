@@ -101,6 +101,12 @@ namespace API_Hospitalar.HospitalServices
             { 
                 pacienteModel.Convenio = null; novoPaciente.Convenio = "Null"; 
             }
+            if (pacienteModel.Status_De_Atendimento == "ATENDIDO")
+            {
+                pacienteModel.TotalAtendimentos++;
+            }
+            _dbContext.DbPacientes.Add(pacienteModel);
+            _dbContext.SaveChanges();
 
             if (novoPaciente.Alergias != null && novoPaciente.Alergias != "string")
             {
@@ -125,13 +131,6 @@ namespace API_Hospitalar.HospitalServices
                 _dbContext.DbCuidados.Add(cuidadosEspecificos);
                 _dbContext.SaveChanges();
             }
-
-            if (pacienteModel.Status_De_Atendimento == "ATENDIDO")
-            {
-                pacienteModel.TotalAtendimentos++;
-            }
-            _dbContext.DbPacientes.Add(pacienteModel);
-            _dbContext.SaveChanges();
             return (pacienteModel);
         }
         public PacienteModel PacientePut_para_Model(PacientePutDTO pacienteEditado, PacienteModel pacienteModel)

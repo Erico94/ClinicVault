@@ -93,22 +93,29 @@ namespace API_Hospitalar.Controllers
         [HttpGet]
         public ActionResult<List<PacienteGetDTO>> ObterTodos([FromQuery] string status)
         {
+            List<PacienteGetDTO> listaPacientes = new List<PacienteGetDTO>();
             if (status != null)
             {
-                List<PacienteGetDTO> listaPacientes = new List<PacienteGetDTO>();
-                foreach (var paciente in _dbContext.DbPacientes)
+                List<string> statusValoresAceitos = new List<string>() { "AGUARDANDO_ATENDIMENTO", "ATENDIDO", "NAO_ATENDIDO", "EM_ATENDIMENTO" };
+                if (statusValoresAceitos.Contains(status))
                 {
-                    if (paciente.Status_De_Atendimento == status)
+                    foreach (var paciente in _dbContext.DbPacientes)
                     {
-                        PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(paciente);
-                        listaPacientes.Add(pacienteGetDTO);
+                        if (paciente.Status_De_Atendimento == status)
+                        {
+                            PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(paciente);
+                            listaPacientes.Add(pacienteGetDTO);
+                        }
                     }
+                    return Ok(listaPacientes);
                 }
-                return Ok(listaPacientes);
+                else
+                {
+                    return BadRequest("Status de atendimento inválido, status aceitos : ATENDIDO, AGUARDANDO_ATENDIMENTO, NAO_ATENDIDO e EM_ATENDIMENTO.");
+                }
             }
             else
             {
-                List<PacienteGetDTO> listaPacientes = new List<PacienteGetDTO>();
                 foreach (var paciente in _dbContext.DbPacientes)
                 {
                     PacienteGetDTO pacienteGetDTO = _IService.PacienteModel_para_GetDTO(paciente);
@@ -121,7 +128,7 @@ namespace API_Hospitalar.Controllers
         [HttpGet("{identificador}")]
         public ActionResult<PacienteGetDTO> ObterPorId([FromRoute] int identificador)
         {
-            if (identificador != null)
+            if (identificador != 0)
             {
                 PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == identificador).FirstOrDefault();
                 if (buscaPaciente != null)
@@ -136,7 +143,7 @@ namespace API_Hospitalar.Controllers
             }
             else
             {
-                return BadRequest("Por gentileza, informe um código identificador.");
+                return BadRequest("Por gentileza, informe um código identificador diferente de zero.");
             }
         }
 
