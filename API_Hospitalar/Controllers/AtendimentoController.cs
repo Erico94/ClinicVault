@@ -37,6 +37,7 @@ namespace API_Hospitalar.Controllers
                         MedicoId = atendimentosDTO.Identificador_medico,
                         PacienteID = atendimentosDTO.Identificador_paciente
                     };
+
                     buscaPaciente.Status_De_Atendimento = "ATENDIDO";
                     _dbContext.DbPacientes.Attach(buscaPaciente);
                     _dbContext.DbAtendimentos.Add(atendimento);
