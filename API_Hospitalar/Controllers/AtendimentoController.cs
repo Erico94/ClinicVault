@@ -37,6 +37,8 @@ namespace API_Hospitalar.Controllers
                         MedicoId = atendimentosDTO.Identificador_medico,
                         PacienteID = atendimentosDTO.Identificador_paciente
                     };
+                    buscaPaciente.Status_De_Atendimento = "ATENDIDO";
+                    _dbContext.DbPacientes.Attach(buscaPaciente);
                     _dbContext.DbAtendimentos.Add(atendimento);
                     _dbContext.SaveChanges();
                     AtendimentosGetDTO getDTO = new AtendimentosGetDTO()
@@ -96,7 +98,8 @@ namespace API_Hospitalar.Controllers
                 {
                     Identificador = atendimento.MedicoId,
                     Nome = medicoModel.Nome,
-                    EspecializacaoClinica = medicoModel.EspecializacaoClinica
+                    EspecializacaoClinica = medicoModel.EspecializacaoClinica,
+                    CRM_UF = medicoModel.CRM_UF
                 };
                 listaAtendimentos.Add(atendimentoGet);
             }

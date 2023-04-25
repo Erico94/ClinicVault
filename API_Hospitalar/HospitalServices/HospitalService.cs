@@ -203,7 +203,8 @@ namespace API_Hospitalar.HospitalServices
                     {
                         Identificador = atendimento.MedicoId,
                         Nome = medico.Nome,
-                        EspecializacaoClinica = medico.EspecializacaoClinica
+                        EspecializacaoClinica = medico.EspecializacaoClinica,
+                        CRM_UF = medico.CRM_UF
                     };
                     medicoGet.Lista_de_Atendimentos.Add(atendimentoGet);
                 }

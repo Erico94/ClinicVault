@@ -49,47 +49,6 @@ namespace API_Hospitalar.Controllers
 
         }
 
-        [HttpPut("{ídentificador}")]
-        public ActionResult<PacienteGetDTO> EditarPorId([FromBody] PacientePutDTO pacienteEditado, [FromRoute] int ídentificador)
-        {
-            PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == ídentificador).FirstOrDefault();
-            if (buscaPaciente != null)
-            {
-                _IService.PacientePut_para_Model(pacienteEditado, buscaPaciente);
-                _dbContext.DbPacientes.Attach(buscaPaciente);
-                _dbContext.SaveChanges();
-                PacienteGetDTO pacienteGet = _IService.PacienteModel_para_GetDTO(buscaPaciente);
-                return Ok(pacienteGet);
-            }
-            else
-            {
-                return NotFound ("Código identificador não encontrado em nosso sistema.");
-            }
-
-
-        }
-
-        [HttpPut("{identificador}/status")]
-        public ActionResult<PacienteDTO> AlterarStatus([FromBody] StatusPacienteDTO paciente, [FromRoute] int identificador)
-        {
-            PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == identificador).FirstOrDefault();
-            if (buscaPaciente != null)
-            {
-                buscaPaciente.Status_De_Atendimento = paciente.Status_de_Atendimento;
-                if (buscaPaciente.Status_De_Atendimento == "ATENDIDO")
-                {
-                    buscaPaciente.TotalAtendimentos++;
-                }
-                _dbContext.DbPacientes.Attach(buscaPaciente);
-                _dbContext.SaveChanges();
-                return Ok(buscaPaciente);
-            }
-            else
-            {
-                return NotFound ("Código identificador não encontrado em nosso sistema.");
-            }
-        }
-
         [HttpGet]
         public ActionResult<List<PacienteGetDTO>> ObterTodos([FromQuery] string status)
         {
@@ -138,7 +97,7 @@ namespace API_Hospitalar.Controllers
                 }
                 else
                 {
-                    return NotFound ("Código identificador não encontrado em nosso sistema.");
+                    return NotFound("Código identificador não encontrado em nosso sistema.");
                 }
             }
             else
@@ -146,6 +105,48 @@ namespace API_Hospitalar.Controllers
                 return BadRequest("Por gentileza, informe um código identificador diferente de zero.");
             }
         }
+
+        [HttpPut("{ídentificador}")]
+        public ActionResult<PacienteGetDTO> EditarPorId([FromBody] PacientePutDTO pacienteEditado, [FromRoute] int ídentificador)
+        {
+            PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == ídentificador).FirstOrDefault();
+            if (buscaPaciente != null)
+            {
+                _IService.PacientePut_para_Model(pacienteEditado, buscaPaciente);
+                _dbContext.DbPacientes.Attach(buscaPaciente);
+                _dbContext.SaveChanges();
+                PacienteGetDTO pacienteGet = _IService.PacienteModel_para_GetDTO(buscaPaciente);
+                return Ok(pacienteGet);
+            }
+            else
+            {
+                return NotFound ("Código identificador não encontrado em nosso sistema.");
+            }
+
+
+        }
+
+        [HttpPut("{identificador}/status")]
+        public ActionResult<PacienteDTO> AlterarStatus([FromBody] StatusPacienteDTO paciente, [FromRoute] int identificador)
+        {
+            PacienteModel buscaPaciente = _dbContext.DbPacientes.Where(i => i.Id == identificador).FirstOrDefault();
+            if (buscaPaciente != null)
+            {
+                buscaPaciente.Status_De_Atendimento = paciente.Status_de_Atendimento;
+                if (buscaPaciente.Status_De_Atendimento == "ATENDIDO")
+                {
+                    buscaPaciente.TotalAtendimentos++;
+                }
+                _dbContext.DbPacientes.Attach(buscaPaciente);
+                _dbContext.SaveChanges();
+                return Ok(buscaPaciente);
+            }
+            else
+            {
+                return NotFound ("Código identificador não encontrado em nosso sistema.");
+            }
+        }
+
 
         [HttpDelete("{identificador}")]
         public ActionResult DeletarPorId([FromRoute] int identificador)

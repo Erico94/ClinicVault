@@ -42,6 +42,74 @@ namespace API_Hospitalar.Controllers
             
         }
 
+        [HttpGet]
+        public ActionResult<List<MedicoGetDTO>> ObterTodosMedicos([FromQuery] string estado_no_sistema)
+        {
+            List<MedicoGetDTO> listaMedicoGetDTO = new List<MedicoGetDTO>();
+            if (estado_no_sistema != null)
+            {
+                if (estado_no_sistema == "true" || estado_no_sistema == "Ativo" || estado_no_sistema == "ativo")
+                {
+                    foreach (var medico in _dbContext.DbMedicos)
+                    {
+                        if (medico.EstadoNoSistema == "Ativo")
+                        {
+                            var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
+                            listaMedicoGetDTO.Add(medicoGetDTO);
+                        }
+                    }
+                    return Ok(listaMedicoGetDTO);
+                }
+                else if (estado_no_sistema == "false" || estado_no_sistema == "Inativo" || estado_no_sistema == "inativo")
+                {
+                    foreach (var medico in _dbContext.DbMedicos)
+                    {
+                        if (medico.EstadoNoSistema == "Inativo")
+                        {
+                            var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
+                            listaMedicoGetDTO.Add(medicoGetDTO);
+                        }
+                    }
+                    return Ok(listaMedicoGetDTO);
+                }
+                else
+                {
+                    return BadRequest("Por favor, insira um item válido em 'estado_no_sistema'. Valores aceitos: true, Ativo, false ou Inativo");
+                }
+            }
+            else
+            {
+                foreach (var medico in _dbContext.DbMedicos)
+                {
+                    var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
+                    listaMedicoGetDTO.Add(medicoGetDTO);
+                }
+                return Ok(listaMedicoGetDTO);
+            }
+        }
+
+        [HttpGet("{identificador}")]
+        public ActionResult<MedicoGetDTO> ObterPorId([FromRoute] int identificador)
+        {
+            if (identificador != 0)
+            {
+                MedicoModel medicoModel = _dbContext.DbMedicos.Where(i => i.Id == identificador).FirstOrDefault();
+                if (medicoModel != null)
+                {
+                    MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(medicoModel);
+                    return Ok(medicoGetDTO);
+                }
+                else
+                {
+                    return NotFound("Identificador não encontrado.");
+                }
+            }
+            else
+            {
+                return BadRequest("Por favor insira o número de identificação do médico. Deve ser diferente de zero.");
+            }
+        }
+
         [HttpPut("{identificador}")]
         public ActionResult <MedicoGetDTO> EditarMedico ([FromBody] MedicoPutDTO medicoEditado,[FromRoute] int identificador)
         {
@@ -80,74 +148,6 @@ namespace API_Hospitalar.Controllers
             else
             {
                 return NotFound("Identificador não encontrado");
-            }
-        }
-
-        [HttpGet]
-        public ActionResult <List<MedicoGetDTO>> ObterTodosMedicos ([FromQuery] string estado_no_sistema)
-        {
-            List<MedicoGetDTO> listaMedicoGetDTO = new List<MedicoGetDTO>();
-            if (estado_no_sistema != null)
-            {
-                if(estado_no_sistema == "true" || estado_no_sistema == "Ativo" || estado_no_sistema == "ativo")
-                {
-                    foreach (var medico in _dbContext.DbMedicos)
-                    {
-                        if (medico.EstadoNoSistema == "Ativo")
-                        {
-                            var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
-                            listaMedicoGetDTO.Add(medicoGetDTO);
-                        }
-                    }
-                    return Ok(listaMedicoGetDTO);
-                }
-                else if (estado_no_sistema == "false" || estado_no_sistema == "Inativo" || estado_no_sistema == "inativo")
-                {
-                    foreach (var medico in _dbContext.DbMedicos)
-                    {
-                        if (medico.EstadoNoSistema == "Inativo")
-                        {
-                            var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
-                            listaMedicoGetDTO.Add(medicoGetDTO);
-                        }
-                    }
-                    return Ok(listaMedicoGetDTO);
-                }
-                else
-                {
-                    return BadRequest("Por favor, insira um item válido em 'estado_no_sistema'. Valores aceitos: true, Ativo, false ou Inativo");
-                }
-            }
-            else
-            {
-                foreach (var medico in _dbContext.DbMedicos)
-                {
-                        var medicoGetDTO = _IService.MedicoModel_para_GetDTO(medico);
-                        listaMedicoGetDTO.Add(medicoGetDTO);
-                }
-                return Ok(listaMedicoGetDTO);
-            }
-        }
-
-        [HttpGet("{identificador}")]
-        public ActionResult <MedicoGetDTO> ObterPorId ([FromRoute] int identificador)
-        {
-            if ( identificador != 0 )
-            {
-                MedicoModel medicoModel = _dbContext.DbMedicos.Where(i => i.Id == identificador).FirstOrDefault();
-                if (medicoModel != null)
-                {
-                    MedicoGetDTO medicoGetDTO = _IService.MedicoModel_para_GetDTO(medicoModel);
-                    return Ok(medicoGetDTO);
-                }
-                else
-                {
-                    return NotFound("Identificador não encontrado.");
-                }
-            }
-            else
-            {
-                return BadRequest("Por favor insira o número de identificação do médico. Deve ser diferente de zero.");
             }
         }
 

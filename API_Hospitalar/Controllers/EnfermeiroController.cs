@@ -39,22 +39,6 @@ namespace API_Hospitalar.Controllers
 
         }
 
-        [HttpPut("{identificador}")]
-        public ActionResult<EnfermeiroGetDTO> EditarEnfermeiro([FromRoute] int identificador, [FromBody] EnfermeiroPutDTO enfermeiroEditado)
-        {
-            EnfermeiroModel buscaEnfermeiroPorId = _dbContext.DbEnfermeiros.Where(i => i.Id == identificador).FirstOrDefault();
-            if (buscaEnfermeiroPorId == null)
-            {
-                return NotFound("Id não encontrado em nosso sistema.");
-            }
-            else
-            {
-                buscaEnfermeiroPorId =_IService.EnfermeiroPut_para_Model ( enfermeiroEditado, buscaEnfermeiroPorId);
-                EnfermeiroGetDTO enfermeiroGet = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(buscaEnfermeiroPorId);
-                return Ok(enfermeiroGet);
-            }
-        }
-
         [HttpGet]
         public ActionResult<List<EnfermeiroGetDTO>> ObterTodosEnfermeiros()
         {
@@ -70,8 +54,8 @@ namespace API_Hospitalar.Controllers
         [HttpGet("{identificador}")]
         public ActionResult<EnfermeiroGetDTO> ObterPorIdentificador([FromRoute] int identificador)
         {
-            EnfermeiroModel enermeiroModel = _dbContext.DbEnfermeiros.Where(i=>i.Id== identificador).FirstOrDefault();
-            if(enermeiroModel == null)
+            EnfermeiroModel enermeiroModel = _dbContext.DbEnfermeiros.Where(i => i.Id == identificador).FirstOrDefault();
+            if (enermeiroModel == null)
             {
                 return NotFound("Não foi possivel localizar este código identificador em nosso sistema.");
             }
@@ -79,6 +63,22 @@ namespace API_Hospitalar.Controllers
             {
                 EnfermeiroGetDTO enfermeiroGetDTO = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(enermeiroModel);
                 return Ok(enfermeiroGetDTO);
+            }
+        }
+
+        [HttpPut("{identificador}")]
+        public ActionResult<EnfermeiroGetDTO> EditarEnfermeiro([FromRoute] int identificador, [FromBody] EnfermeiroPutDTO enfermeiroEditado)
+        {
+            EnfermeiroModel buscaEnfermeiroPorId = _dbContext.DbEnfermeiros.Where(i => i.Id == identificador).FirstOrDefault();
+            if (buscaEnfermeiroPorId == null)
+            {
+                return NotFound("Id não encontrado em nosso sistema.");
+            }
+            else
+            {
+                buscaEnfermeiroPorId =_IService.EnfermeiroPut_para_Model ( enfermeiroEditado, buscaEnfermeiroPorId);
+                EnfermeiroGetDTO enfermeiroGet = _IService.EnfermeiroModel_para_EnfermeiroGetDTO(buscaEnfermeiroPorId);
+                return Ok(enfermeiroGet);
             }
         }
 
