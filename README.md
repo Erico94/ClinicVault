@@ -3,7 +3,7 @@
 
 MVP integrado ao banco de dados com operações CRUD, desenvolvido visando facilitar o gerenciamento e armazenamento de cadastros de pacientes, médicos e enfermeiros em âmbitos hospitalares, como também armazenamento de alergias, cuidados específicos e atendimentos realizados aos pacientes. Para um futuro próximo, será adicionado um sistema de gerenciamento da fila de espera do atendimento, que considerará o horário de entrada ao hospital e a urgência de cada caso, onde os mais graves terão prioridade.
 
-Para executa-lo, será necessário a instalação de dois Softwares, o VisualStudio para rodar a aplicação, este com o Swagger configurado, que será de onde enviaremos as requisições ao ClinicVault, por último e não menos importante, deve-se ter instalado em sua máquina algum SGBDR, indico o SqlServer Express, mas isso fica à sua escolha.
+Para executa-lo, será necessário a instalação de dois Softwares, o VisualStudio para rodar a aplicação, este com o Swagger configurado, que será de onde enviaremos as requisições ao ClinicVault, por último e não menos importante, deve-se ter instalado em sua máquina algum SGBDR, indico o Sql Server Express, mas isso fica à sua escolha.
 
 ## Documentação da API
 
@@ -64,4 +64,12 @@ Para executa-lo, será necessário a instalação de dois Softwares, o�
 | Parâmetro   | Tipo       | Descrição                           |
 | :---------- | :--------- | :---------------------------------- |
 | `Identificador` | `Número inteiro` | **Exclui um item no banco de dados**. |
+
+### Tecnologias e ferramentas utilizadas:
+° .Net;
+° C#;
+° VisualStudio;
+° GitHub;
+° Sql Server Express;
+° Trello;
 
