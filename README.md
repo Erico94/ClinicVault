@@ -65,11 +65,11 @@ Para executa-lo, será necessário a instalação de dois Softwares, o�
 | :---------- | :--------- | :---------------------------------- |
 | `Identificador` | `Número inteiro` | **Exclui um item no banco de dados**. |
 
-### Tecnologias e ferramentas utilizadas:
-## .Net;
-## C#;
-## Visual Studio;
-## GitHub;
-## Sql Server Express;
-## Trello;
+## Tecnologias e ferramentas utilizadas:
+### .Net;
+### C#;
+### Visual Studio;
+### GitHub;
+### Sql Server Express;
+### Trello;
 
