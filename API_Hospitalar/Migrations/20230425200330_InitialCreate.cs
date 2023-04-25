@@ -4,10 +4,10 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace API_Hospitalar.Migrations
+namespace ClinicVault.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -174,6 +174,29 @@ namespace API_Hospitalar.Migrations
                     { 8, "09658748695", "45998547821", "Premium Saude", "09/abr/1972", "M", "Mário Silva", "NAO_ATENDIDO", "45998546325", 0 },
                     { 9, "03265878965", "45996365247", "Amil", "28/mar/1996", "M", "André Heimn", "NAO_ATENDIDO", "45996854702", 0 },
                     { 10, "06325418759", "45998487596", "Samaritano", "19/abr/2005", "F", "Priscila Boliviar Cácer", "NAO_ATENDIDO", "4532659874", 0 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "ALERGIAS",
+                columns: new[] { "ID", "ALERGIA", "PACIENTE_ID" },
+                values: new object[,]
+                {
+                    { 1, "Látex", 2 },
+                    { 2, "Analgésicos", 3 },
+                    { 3, "Antibióticos", 5 },
+                    { 4, "Glútem", 8 },
+                    { 5, "Poeira, Insetos", 1 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "CUIDADOS-ESPECIFICOS",
+                columns: new[] { "ID", "CUIDADO", "PACIENTE_ID" },
+                values: new object[,]
+                {
+                    { 1, "pressão alta.", 7 },
+                    { 2, "Perda de memória.", 8 },
+                    { 3, "Diabetes", 3 },
+                    { 4, "Hipertensão", 10 }
                 });
 
             migrationBuilder.CreateIndex(

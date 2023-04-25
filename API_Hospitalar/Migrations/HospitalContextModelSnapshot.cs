@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace API_Hospitalar.Migrations
+namespace ClinicVault.Migrations
 {
     [DbContext(typeof(HospitalContext))]
     partial class HospitalContextModelSnapshot : ModelSnapshot
@@ -43,6 +43,38 @@ namespace API_Hospitalar.Migrations
                     b.HasIndex("PacienteID");
 
                     b.ToTable("ALERGIAS");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DescricaoAlergia = "Látex",
+                            PacienteID = 2
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DescricaoAlergia = "Analgésicos",
+                            PacienteID = 3
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DescricaoAlergia = "Antibióticos",
+                            PacienteID = 5
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DescricaoAlergia = "Glútem",
+                            PacienteID = 8
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DescricaoAlergia = "Poeira, Insetos",
+                            PacienteID = 1
+                        });
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.Atendimentos", b =>
@@ -99,6 +131,32 @@ namespace API_Hospitalar.Migrations
                     b.HasIndex("PacienteID");
 
                     b.ToTable("CUIDADOS-ESPECIFICOS");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DescricaoCuidado = "pressão alta.",
+                            PacienteID = 7
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DescricaoCuidado = "Perda de memória.",
+                            PacienteID = 8
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DescricaoCuidado = "Diabetes",
+                            PacienteID = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DescricaoCuidado = "Hipertensão",
+                            PacienteID = 10
+                        });
                 });
 
             modelBuilder.Entity("API_Hospitalar.Models.EnfermeiroModel", b =>

@@ -194,6 +194,64 @@ namespace API_Hospitalar.HospitalContextDb
                     CadastroCOFEN_UF = "005423/PR"
                 }
                 );
+            modelBuilder.Entity<Cuidados>().HasData(
+                new Cuidados
+                {
+                    Id = 1,
+                    DescricaoCuidado = "pressão alta.",
+                    PacienteID = 7
+                },
+                new Cuidados
+                {
+                    Id = 2,
+                    DescricaoCuidado = "Perda de memória.",
+                    PacienteID = 8
+                },
+                new Cuidados
+                {
+                    Id = 3,
+                    DescricaoCuidado = "Diabetes",
+                    PacienteID = 3
+                },
+                new Cuidados
+                {
+                    Id = 4,
+                    DescricaoCuidado = "Hipertensão",
+                    PacienteID = 10
+                }
+                );
+            modelBuilder.Entity<Alergias>().HasData(
+                new Alergias
+                {
+                    Id = 1,
+                    DescricaoAlergia = "Látex",
+                    PacienteID = 2
+                },
+                new Alergias
+                {
+                    Id = 2,
+                    DescricaoAlergia = "Analgésicos",
+                    PacienteID = 3
+                },
+                new Alergias
+                {
+                    Id = 3,
+                    DescricaoAlergia = "Antibióticos",
+                    PacienteID = 5
+                },
+                new Alergias
+                {
+                    Id = 4,
+                    DescricaoAlergia = "Glútem",
+                    PacienteID = 8
+                },
+                new Alergias
+                {
+                    Id = 5,
+                    DescricaoAlergia = "Poeira, Insetos",
+                    PacienteID = 1
+                }
+                );
         }
     }
 }
