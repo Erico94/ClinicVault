@@ -71,14 +71,26 @@ namespace API_Hospitalar.HospitalServices
             {
                 if (atendimento.PacienteID == pacienteGetDTO.Identificador)
                 {
-                    AtendimentosGetDTO atendimentoDTO = new AtendimentosGetDTO()
+                    AtendimentosGetDTO atendimentoGet = new AtendimentosGetDTO()
                     {
                         Id_Atendimento = atendimento.Id_Atendimento,
-                        Descricao = atendimento.Descricao,
-                        Identificador_medico = atendimento.MedicoId,
-                        Identificador_paciente = atendimento.PacienteID
+                        Descricao = atendimento.Descricao
                     };
-                    pacienteGetDTO.Atendimentos.Add(atendimentoDTO);
+                    PacienteModel paciente= _dbContext.DbPacientes.Where(i => i.Id == atendimento.PacienteID).FirstOrDefault();
+                    atendimentoGet.Paciente = new PacienteSimplesGetDTO()
+                    {
+                        Identificador = atendimento.PacienteID,
+                        Nome = pacienteModel.Nome,
+                        Convenio = pacienteModel.Convenio
+                    };
+                    MedicoModel medico = _dbContext.DbMedicos.Where(i => i.Id == atendimento.MedicoId).FirstOrDefault();
+                    atendimentoGet.Medico = new MedicoSimplesGetDTO()
+                    {
+                        Identificador = atendimento.MedicoId,
+                        Nome = medico.Nome,
+                        EspecializacaoClinica = medico.EspecializacaoClinica
+                    };
+                    pacienteGetDTO.Atendimentos.Add(atendimentoGet);
                 }
             }
             return pacienteGetDTO;
@@ -173,14 +185,26 @@ namespace API_Hospitalar.HospitalServices
             {
                 if (atendimento.MedicoId == medicoGet.Identificador)
                 {
-                    AtendimentosGetDTO atendimentoDTO = new AtendimentosGetDTO()
+                    AtendimentosGetDTO atendimentoGet = new AtendimentosGetDTO()
                     {
                         Id_Atendimento = atendimento.Id_Atendimento,
                         Descricao = atendimento.Descricao,
-                        Identificador_medico = atendimento.MedicoId,
-                        Identificador_paciente = atendimento.PacienteID
                     };
-                    medicoGet.Lista_de_Atendimentos.Add(atendimentoDTO);
+                    PacienteModel pacienteModel = _dbContext.DbPacientes.Where(i => i.Id == atendimento.PacienteID).FirstOrDefault();
+                    atendimentoGet.Paciente = new PacienteSimplesGetDTO()
+                    {
+                        Identificador = atendimento.PacienteID,
+                        Nome = pacienteModel.Nome,
+                        Convenio = pacienteModel.Convenio
+                    };
+                    MedicoModel medico= _dbContext.DbMedicos.Where(i => i.Id == atendimento.MedicoId).FirstOrDefault();
+                    atendimentoGet.Medico = new MedicoSimplesGetDTO()
+                    {
+                        Identificador = atendimento.MedicoId,
+                        Nome = medico.Nome,
+                        EspecializacaoClinica = medico.EspecializacaoClinica
+                    };
+                    medicoGet.Lista_de_Atendimentos.Add(atendimentoGet);
                 }
             }
             return medicoGet;
