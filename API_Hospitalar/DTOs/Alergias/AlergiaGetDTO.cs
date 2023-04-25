@@ -5,8 +5,8 @@ namespace API_Hospitalar.DTOs.Alergias
 {
     public class AlergiaGetDTO
     {
-        public int Id_alergia { get; set; }
+        public int Identificador_alergia { get; set; }
         public int Identificador_paciente { get; set; }
-        public string DescricaoAlergia { get; set; }
+        public string Descricao_Alergia { get; set; }
     }
 }

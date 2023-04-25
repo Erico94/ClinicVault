@@ -43,9 +43,9 @@ namespace API_Hospitalar.HospitalServices
                 {
                     AlergiaGetDTO alergiaDTO = new AlergiaGetDTO()
                     {
-                        Id_alergia = alergia.Id,
+                        Identificador_alergia = alergia.Id,
                         Identificador_paciente = alergia.PacienteID,
-                        DescricaoAlergia = alergia.DescricaoAlergia
+                        Descricao_Alergia = alergia.DescricaoAlergia
                     };
                     pacienteGetDTO.Alergias.Add(alergiaDTO);
                 }
@@ -58,7 +58,7 @@ namespace API_Hospitalar.HospitalServices
                 {
                     CuidadosGetDTO cuidadoDTO = new CuidadosGetDTO()
                     {
-                        Id = cuidado.Id,
+                        Identificador = cuidado.Id,
                         DescricaoCuidado = cuidado.DescricaoCuidado,
                         Identificador_paciente = cuidado.PacienteID
                     };
@@ -88,7 +88,8 @@ namespace API_Hospitalar.HospitalServices
                     {
                         Identificador = atendimento.MedicoId,
                         Nome = medico.Nome,
-                        EspecializacaoClinica = medico.EspecializacaoClinica
+                        EspecializacaoClinica = medico.EspecializacaoClinica,
+                        CRM_UF = medico.CRM_UF
                     };
                     pacienteGetDTO.Atendimentos.Add(atendimentoGet);
                 }
