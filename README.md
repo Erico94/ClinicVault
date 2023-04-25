@@ -1,5 +1,5 @@
 
-ClinicVault
+# ClinicVault
 
 MVP integrado ao banco de dados com operações CRUD, desenvolvido visando facilitar o gerenciamento e armazenamento de cadastros de pacientes, médicos e enfermeiros em hâmbitos hospitalares, como também armazenamento de alergias, cuidados específicos e atendimentos realizados aos pacientes. Para um futuro próximo, será adicionado um sistema de gerenciamento da fila de espera do atendimento, que levará em consideração o horário de entrada ao hospital e a urgência de cada caso, onde os mais graves terão prioridade.
 
